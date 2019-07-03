@@ -20,7 +20,7 @@ import android.media.AudioAttributes;
 import android.net.Uri;
 import android.os.Build;
 import android.os.Bundle;
-import android.support.v4.app.NotificationCompat;
+import androidx.core.app.NotificationCompat;
 import android.util.Log;
 
 import com.facebook.react.bridge.ReadableMap;
@@ -368,22 +368,18 @@ public class RNPushNotificationHelper {
                         Log.e(LOG_TAG, "id and text must be defined. Action will not be added");
                         continue;
                     }
-// master
+                    // Log.i("RNPN Helper", "Adding action: " + id + " with text: " + text);
+                    // Log.i("RNPN Helper", "setting actionIntent to: " + context.getPackageName() + "." + id );
 
-                    // Intent actionIntent = new Intent(context, intentClass);
-                    // actionIntent.addFlags(Intent.FLAG_ACTIVITY_SINGLE_TOP);
-                    // actionIntent.setAction(context.getPackageName() + "." + action);
-
-// end-master section
-                    Intent actionIntent = new Intent();
+                    Intent actionIntent = new Intent(context, RNPushNotificationActionHandlerReceiver.class);
+                    actionIntent.addFlags(Intent.FLAG_ACTIVITY_SINGLE_TOP);
                     actionIntent.setAction(context.getPackageName() + "." + id);
-// end changes_dluksza/master
 
                     // Add "action" for later identifying which button gets pressed.
                     bundle.putString("action", id);
                     actionIntent.putExtra("notification", bundle);
 
-                    PendingIntent pendingActionIntent = PendingIntent.getActivity(context, notificationID, actionIntent,
+                    PendingIntent pendingActionIntent = PendingIntent.getBroadcast(context, notificationID, actionIntent,
                             PendingIntent.FLAG_UPDATE_CURRENT);
                     notification.addAction(icon, text, pendingActionIntent);
                 }
